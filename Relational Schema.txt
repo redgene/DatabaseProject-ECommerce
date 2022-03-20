@@ -1,0 +1,43 @@
+RELATIONAL SCHEMA:
+
+Schemas derived from strong entity:
+- Product (ProductID pkey string not null, Brand string not null, Material_Color_Capacity string, CountryOrigin string, CustomerReviewsNumber int not null, CustomerAverageReview float not null, PriceNew float, PriceUsed float, CategoryID fkey (Category), CartID fkey (Cart), SellerID fkey (Seller))
+- Seller (SellerID pkey string not null, SellerEmail string, SellerPhone string, SellerAddress string, PC_ID fkey (PostalCompany), ProductID fkey (Product))
+- Customer (CustomerID pkey string not null, CustomerFirstName string not null, CustomerLastName string not null, Street string, City string, Zip long, State string, CustomerPhone string not null)
+- Cart (CartID pkey string, CartTotal float, ProductID fkey (Product), Cart_Products_No int)
+- PostalCompany (PC_ID pkey string not null, PCName string not null, PCLocation string not null, SellerID fkey (Seller))
+- Category (CategoryID pkey string not null, CategoryName string not null)
+- Order (OrderID pkey string not null, PaymentMethod string, PriceTotal float not null, DeliverDateExpected datetime not null, DeliveryDateActual datetime, SellerID fkey (Seller), CustomerID fkey (Customer), PC_ID fkey (PostalCompany)) 
+Schemas derived from relationship sets (Many to Many)
+- IsAvailable_IsSoldBy (SellerID pkey fkey (Seller), ProductID pkey fkey (Product))
+- HasProducts (CartID pkey fkey (Cart), ProductID pkey fkey (Product), Cart_Products_No)
+- UtilizesPostalCompany (SellerID pkey fkey (Seller), PC_ID pkey fkey (PostalCompany))
+- RelatedProducts (CurrentProduct_Product pkey fkey (Product), RelatedProduct_Product pkey fkey (Product))
+
+Schemas derived from relationship sets (Many to One / One to Many)
+- IsShippedBy (OrderID pkey fkey (Order), PC_ID fkey (PostalCompany))
+- BelongsTo (ProductID pkey fkey (Product), CategoryID fkey (Category))
+- HasOrders (OrderID pkey fkey (Order), CustomerID fkey (Customer))
+- IsFulfilledBy (OrderID pkey fkey (Order), SellerID fkey (Seller))
+
+---------------------------------------------------------------------------------------------------------------------------
+Please note: .txt does not support underlining, therefore pkey has been written (as given on Pg.247 (6.9.7))
+For many to many, both foreign keys are primary keys for that relationship set.
+For many to one, only those foreign keys that are derived from multi-cardinality part is primary for the relationship set.
+not null has been used wherever total participation is required.
+----------------------------------------------------------------------------------------------------------------------------
+
+Previous writeup: github.com/uchicago-mpcs-53001/project-redgene/blob/main/p1/p1.txt
+Entity sets are same as before (other than Inventory, which has been included as a relational attribute for each product - seller mapping).
+Relations have been defined as follows:
+- An order can have only one postal company, but a postal company can cater to multiple orders.
+- Similarly, An order can have only one seller, but a seller can cater to multiple orders
+- Every order must have an associated customer (>=1)
+- Every order must have an associated Seller as well (>=1)
+- But an order may or may not be assigned a Postal Company yet, so this could be 0
+- A customer can have multiple orders, but each order is only for a specific customer.
+- A cart can belong to only one customer (hence one to one)
+- A product can only belong to one category, but a category (such as electronics) will have multiple products.
+- A product can be sold by multiple sellers and the same seller can sell multiple products.
+- Every product has an associated Category.
+- Every seller has a preferred postal company as well.
